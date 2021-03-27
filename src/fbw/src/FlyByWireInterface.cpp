@@ -158,6 +158,9 @@ void FlyByWireInterface::loadConfiguration() {
 }
 
 void FlyByWireInterface::setupLocalVariables() {
+  // register L variable for FDR event
+  idFdrEvent = register_named_variable("A32NX_DFDR_EVENT_ON");
+
   // register L variables for the sidestick
   idSideStickPositionX = register_named_variable("A32NX_SIDESTICK_POSITION_X");
   idSideStickPositionY = register_named_variable("A32NX_SIDESTICK_POSITION_Y");
@@ -413,6 +416,7 @@ bool FlyByWireInterface::updateAutopilotStateMachine(double sampleTime) {
     autopilotStateMachineInput.in.input.MACH_mode = simData.is_mach_mode_active;
     autopilotStateMachineInput.in.input.ATHR_engaged = (autoThrustOutput.status == 2);
     autopilotStateMachineInput.in.input.is_SPEED_managed = (simData.speed_slot_index == 2);
+    autopilotStateMachineInput.in.input.FDR_event = get_named_variable_value(idFdrEvent);
 
     // step the model -------------------------------------------------------------------------------------------------
     autopilotStateMachine.setExternalInputs(&autopilotStateMachineInput);

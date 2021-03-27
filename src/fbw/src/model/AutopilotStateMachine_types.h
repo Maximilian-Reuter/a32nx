@@ -103,6 +103,7 @@ typedef struct {
   boolean_T MACH_mode;
   boolean_T ATHR_engaged;
   boolean_T is_SPEED_managed;
+  boolean_T FDR_event;
 } ap_raw_sm_input;
 
 #endif
