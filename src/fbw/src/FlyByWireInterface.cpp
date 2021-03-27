@@ -117,6 +117,7 @@ void FlyByWireInterface::loadConfiguration() {
   flyByWireEnabled = INITypeConversion::getBoolean(iniStructure, "MODEL", "FLY_BY_WIRE_ENABLED", true);
   tailstrikeProtectionEnabled = INITypeConversion::getBoolean(iniStructure, "MODEL", "TAILSTRIKE_PROTECTION_ENABLED", false);
   customFlightGuidanceEnabled = INITypeConversion::getBoolean(iniStructure, "AUTOPILOT", "CUSTOM_FLIGHT_GUIDANCE_ENABLED", false);
+  gpsCourseToSteerEnabled = INITypeConversion::getBoolean(iniStructure, "AUTOPILOT", "GPS_COURSE_TO_STEER_ENABLED", true);
   flightDirectorSmoothingEnabled = INITypeConversion::getBoolean(iniStructure, "AUTOPILOT", "FLIGHT_DIRECTOR_SMOOTHING_ENABLED", true);
   flightDirectorSmoothingFactor = INITypeConversion::getDouble(iniStructure, "AUTOPILOT", "FLIGHT_DIRECTOR_SMOOTHING_FACTOR", 2.5);
   flightDirectorSmoothingLimit = INITypeConversion::getDouble(iniStructure, "AUTOPILOT", "FLIGHT_DIRECTOR_SMOOTHING_LIMIT", 20);
@@ -128,6 +129,7 @@ void FlyByWireInterface::loadConfiguration() {
   std::cout << "WASM: MODEL     : FLY_BY_WIRE_ENABLED               = " << flyByWireEnabled << endl;
   std::cout << "WASM: MODEL     : TAILSTRIKE_PROTECTION_ENABLED     = " << tailstrikeProtectionEnabled << endl;
   std::cout << "WASM: AUTOPILOT : CUSTOM_FLIGHT_GUIDANCE_ENABLED    = " << customFlightGuidanceEnabled << endl;
+  std::cout << "WASM: AUTOPILOT : GPS_COURSE_TO_STEER_ENABLED       = " << gpsCourseToSteerEnabled << endl;
   std::cout << "WASM: AUTOPILOT : FLIGHT_DIRECTOR_SMOOTHING_ENABLED = " << flightDirectorSmoothingEnabled << endl;
   std::cout << "WASM: AUTOPILOT : FLIGHT_DIRECTOR_SMOOTHING_FACTOR  = " << flightDirectorSmoothingFactor << endl;
   std::cout << "WASM: AUTOPILOT : FLIGHT_DIRECTOR_SMOOTHING_LIMIT   = " << flightDirectorSmoothingLimit << endl;
@@ -251,32 +253,50 @@ bool FlyByWireInterface::readDataAndLocalVariables(double sampleTime) {
   // get sim data
   SimData simData = simConnectInterface.getSimData();
 
+  // get or calculate XTK and TAE
+  if (customFlightGuidanceEnabled) {
+    flightGuidanceCrossTrackError = get_named_variable_value(idFlightGuidanceCrossTrackError);
+    flightGuidanceTrackAngleError = get_named_variable_value(idFlightGuidanceTrackAngleError);
+    flightGuidancePhiPreCommand = get_named_variable_value(idFlightGuidancePhiCommand);
+  } else {
+    if (gpsCourseToSteerEnabled) {
+      flightGuidanceCrossTrackError = 0;
+      flightGuidanceTrackAngleError = getHeadingAngleError(
+          simData.Psi_magnetic_track_deg,
+          getHeadingSum(simData.Psi_magnetic_track_deg, getHeadingAngleError(simData.Psi_magnetic_deg, simData.gpsCourseToSteer)));
+      flightGuidancePhiPreCommand = 0;
+    } else {
+      flightGuidanceCrossTrackError = simData.gpsWpCrossTrack;
+      flightGuidanceTrackAngleError = simData.gpsWpTrackAngleError;
+      flightGuidancePhiPreCommand = 0;
+    }
+  }
+
   // read local variables and update client data
   // update client data for flight guidance
   if (!autopilotStateMachineEnabled || !autopilotLawsEnabled) {
-    ClientDataLocalVariables clientDataLocalVariables = {
-        get_named_variable_value(idFmgcFlightPhase),
-        get_named_variable_value(idFmgcV2),
-        get_named_variable_value(idFmgcV_APP),
-        get_named_variable_value(idFmgcV_LS),
-        customFlightGuidanceEnabled ? 1.0 : simData.gpsIsFlightPlanActive,
-        get_named_variable_value(idFmgcAltitudeConstraint),
-        get_named_variable_value(idFmgcThrustReductionAltitude),
-        get_named_variable_value(idFmgcThrustReductionAltitudeGoAround),
-        get_named_variable_value(idFmgcAccelerationAltitude),
-        get_named_variable_value(idFmgcAccelerationAltitudeEngineOut),
-        get_named_variable_value(idFmgcAccelerationAltitudeGoAround),
-        get_named_variable_value(idFmgcAccelerationAltitudeGoAroundEngineOut),
-        get_named_variable_value(idFmgcCruiseAltitude),
-        simConnectInterface.getSimInputAutopilot().DIR_TO_trigger,
-        get_named_variable_value(idFcuTrkFpaModeActive),
-        get_named_variable_value(idFcuSelectedVs),
-        get_named_variable_value(idFcuSelectedFpa),
-        get_named_variable_value(idFcuSelectedHeading),
-        customFlightGuidanceEnabled ? get_named_variable_value(idFlightGuidanceCrossTrackError) : simData.gpsWpCrossTrack,
-        customFlightGuidanceEnabled ? get_named_variable_value(idFlightGuidanceTrackAngleError) : simData.gpsWpTrackAngleError,
-        customFlightGuidanceEnabled ? get_named_variable_value(idFlightGuidancePhiCommand) : 0,
-        simData.speed_slot_index == 2};
+    ClientDataLocalVariables clientDataLocalVariables = {get_named_variable_value(idFmgcFlightPhase),
+                                                         get_named_variable_value(idFmgcV2),
+                                                         get_named_variable_value(idFmgcV_APP),
+                                                         get_named_variable_value(idFmgcV_LS),
+                                                         customFlightGuidanceEnabled ? 1.0 : simData.gpsIsFlightPlanActive,
+                                                         get_named_variable_value(idFmgcAltitudeConstraint),
+                                                         get_named_variable_value(idFmgcThrustReductionAltitude),
+                                                         get_named_variable_value(idFmgcThrustReductionAltitudeGoAround),
+                                                         get_named_variable_value(idFmgcAccelerationAltitude),
+                                                         get_named_variable_value(idFmgcAccelerationAltitudeEngineOut),
+                                                         get_named_variable_value(idFmgcAccelerationAltitudeGoAround),
+                                                         get_named_variable_value(idFmgcAccelerationAltitudeGoAroundEngineOut),
+                                                         get_named_variable_value(idFmgcCruiseAltitude),
+                                                         simConnectInterface.getSimInputAutopilot().DIR_TO_trigger,
+                                                         get_named_variable_value(idFcuTrkFpaModeActive),
+                                                         get_named_variable_value(idFcuSelectedVs),
+                                                         get_named_variable_value(idFcuSelectedFpa),
+                                                         get_named_variable_value(idFcuSelectedHeading),
+                                                         flightGuidanceCrossTrackError,
+                                                         flightGuidanceTrackAngleError,
+                                                         flightGuidancePhiPreCommand,
+                                                         simData.speed_slot_index == 2};
     simConnectInterface.setClientDataLocalVariables(clientDataLocalVariables);
   }
 
@@ -296,7 +316,8 @@ bool FlyByWireInterface::updateAutopilotStateMachine(double sampleTime) {
   // get data from interface ------------------------------------------------------------------------------------------
   SimData simData = simConnectInterface.getSimData();
   SimInputAutopilot simInputAutopilot = simConnectInterface.getSimInputAutopilot();
-  // get also input for AP --------------------------------------------------------------------------------------------
+
+  // calculate XTK and TAE --------------------------------------------------------------------------------------------
 
   // update state machine ---------------------------------------------------------------------------------------------
   if (autopilotStateMachineEnabled) {
@@ -333,12 +354,9 @@ bool FlyByWireInterface::updateAutopilotStateMachine(double sampleTime) {
     autopilotStateMachineInput.in.data.nav_loc_error_deg = simData.nav_loc_error_deg;
     autopilotStateMachineInput.in.data.nav_gs_valid = (simData.nav_gs_valid != 0);
     autopilotStateMachineInput.in.data.nav_gs_error_deg = simData.nav_gs_error_deg;
-    autopilotStateMachineInput.in.data.flight_guidance_xtk_nmi =
-        customFlightGuidanceEnabled ? get_named_variable_value(idFlightGuidanceCrossTrackError) : simData.gpsWpCrossTrack;
-    autopilotStateMachineInput.in.data.flight_guidance_tae_deg =
-        customFlightGuidanceEnabled ? get_named_variable_value(idFlightGuidanceTrackAngleError) : simData.gpsWpTrackAngleError;
-    autopilotStateMachineInput.in.data.flight_guidance_phi_deg =
-        customFlightGuidanceEnabled ? get_named_variable_value(idFlightGuidancePhiCommand) : 0;
+    autopilotStateMachineInput.in.data.flight_guidance_xtk_nmi = flightGuidanceCrossTrackError;
+    autopilotStateMachineInput.in.data.flight_guidance_tae_deg = flightGuidanceTrackAngleError;
+    autopilotStateMachineInput.in.data.flight_guidance_phi_deg = flightGuidancePhiPreCommand;
     autopilotStateMachineInput.in.data.flight_phase = get_named_variable_value(idFmgcFlightPhase);
     autopilotStateMachineInput.in.data.V2_kn = get_named_variable_value(idFmgcV2);
     autopilotStateMachineInput.in.data.VAPP_kn = get_named_variable_value(idFmgcV_APP);
@@ -606,12 +624,9 @@ bool FlyByWireInterface::updateAutopilotLaws(double sampleTime) {
     autopilotLawsInput.in.data.nav_loc_error_deg = simData.nav_loc_error_deg;
     autopilotLawsInput.in.data.nav_gs_valid = (simData.nav_gs_valid != 0);
     autopilotLawsInput.in.data.nav_gs_error_deg = simData.nav_gs_error_deg;
-    autopilotLawsInput.in.data.flight_guidance_xtk_nmi =
-        customFlightGuidanceEnabled ? get_named_variable_value(idFlightGuidanceCrossTrackError) : simData.gpsWpCrossTrack;
-    autopilotLawsInput.in.data.flight_guidance_tae_deg =
-        customFlightGuidanceEnabled ? get_named_variable_value(idFlightGuidanceTrackAngleError) : simData.gpsWpTrackAngleError;
-    autopilotLawsInput.in.data.flight_guidance_phi_deg =
-        customFlightGuidanceEnabled ? get_named_variable_value(idFlightGuidancePhiCommand) : 0;
+    autopilotLawsInput.in.data.flight_guidance_xtk_nmi = flightGuidanceCrossTrackError;
+    autopilotLawsInput.in.data.flight_guidance_tae_deg = flightGuidanceTrackAngleError;
+    autopilotLawsInput.in.data.flight_guidance_phi_deg = flightGuidancePhiPreCommand;
     autopilotLawsInput.in.data.flight_phase = get_named_variable_value(idFmgcFlightPhase);
     autopilotLawsInput.in.data.V2_kn = get_named_variable_value(idFmgcV2);
     autopilotLawsInput.in.data.VAPP_kn = get_named_variable_value(idFmgcV_APP);
@@ -994,4 +1009,18 @@ double FlyByWireInterface::smoothFlightDirector(double sampleTime, double factor
     difference = max(-1.0 * limit, difference);
   }
   return currentValue + (difference * min(1.0, sampleTime * factor));
+}
+
+double FlyByWireInterface::getHeadingSum(double u1, double u2) {
+  return fmod(u1 + u2 + 360.0, 360.0);
+}
+
+double FlyByWireInterface::getHeadingAngleError(double u1, double u2) {
+  double dPsi_1 = fmod(u1 - (u2 + 360.0) + 360.0, 360.0);
+  double dPsi_2 = fmod(360.0 - dPsi_1, 360.0);
+  if (dPsi_1 < dPsi_2) {
+    return -dPsi_1;
+  } else {
+    return dPsi_2;
+  }
 }

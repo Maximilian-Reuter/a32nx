@@ -98,6 +98,7 @@ struct SimData {
   unsigned long long gpsIsFlightPlanActive;
   double gpsWpCrossTrack;
   double gpsWpTrackAngleError;
+  double gpsCourseToSteer;
   double commanded_engine_N1_1_percent;
   double commanded_engine_N1_2_percent;
   double engine_N1_1_percent;

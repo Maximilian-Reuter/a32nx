@@ -51,6 +51,7 @@ class FlyByWireInterface {
   double flightDirectorSmoothingFactor = 0;
   double flightDirectorSmoothingLimit = 0;
   bool customFlightGuidanceEnabled = false;
+  bool gpsCourseToSteerEnabled = false;
   bool autopilotStateMachineEnabled = false;
   bool autopilotLawsEnabled = false;
   bool flyByWireEnabled = false;
@@ -65,6 +66,10 @@ class FlyByWireInterface {
 
   bool autolandWarningLatch = false;
   bool autolandWarningTriggered = false;
+
+  double flightGuidanceCrossTrackError = 0.0;
+  double flightGuidanceTrackAngleError = 0.0;
+  double flightGuidancePhiPreCommand = 0.0;
 
   FlightDataRecorder flightDataRecorder;
 
@@ -171,4 +176,7 @@ class FlyByWireInterface {
   bool updateAutothrust(double sampleTime);
 
   double smoothFlightDirector(double sampleTime, double factor, double limit, double currentValue, double targetValue);
+
+  double getHeadingSum(double u1, double u2);
+  double getHeadingAngleError(double u1, double u2);
 };
