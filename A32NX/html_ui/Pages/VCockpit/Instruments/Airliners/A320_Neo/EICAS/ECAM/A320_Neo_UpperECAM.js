@@ -2338,7 +2338,7 @@ var A320_Neo_UpperECAM;
                         this.setFlexTemperature(false);
                         break;
                 }
-                this.setThrottle(true, thrustLimit, throttleMode, onGround, Simplane.getCurrentFlightPhase());
+                this.setThrottle(true, thrustLimit, throttleMode, onGround, SimVar.GetSimVarValue("L:A32NX_FMGC_FLIGHT_PHASE", "number"));
             } else {
                 this.setThrottle(false);
                 this.setFlexTemperature(false);
