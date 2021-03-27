@@ -61,6 +61,9 @@ void FlyByWireInterface::disconnect() {
 
   // delete throttle axis mapping -> due to usage of shared_ptr no delete call is needed
   throttleAxis.clear();
+
+  // unregister local variables
+  unregister_all_named_vars();
 }
 
 bool FlyByWireInterface::update(double sampleTime) {
