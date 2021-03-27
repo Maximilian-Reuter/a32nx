@@ -253,8 +253,8 @@ ThrottleAxisMapping::Configuration ThrottleAxisMapping::getDefaultConfiguration(
       -0.95,  // reverse high
       -0.20,  // reverse idle low
       -0.15,  // reverse idle high
-      +0.00,  // idle low
-      +0.05,  // idle high
+      -1.00,  // idle low
+      -0.95,  // idle high
       +0.60,  // climb low
       +0.65,  // climb high
       +0.85,  // flex/mct low
