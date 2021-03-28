@@ -84,6 +84,11 @@ typedef struct {
   boolean_T is_SRS_GA_mode_active;
   real_T thrust_reduction_altitude;
   real_T thrust_reduction_altitude_go_around;
+  boolean_T is_anti_ice_wing_active;
+  boolean_T is_anti_ice_engine_1_active;
+  boolean_T is_anti_ice_engine_2_active;
+  boolean_T is_air_conditioning_1_active;
+  boolean_T is_air_conditioning_2_active;
 } athr_input;
 
 #endif

@@ -150,6 +150,9 @@ class FlyByWireInterface {
   ID idFmgcFlexTemperature;
   ID idFmgcDirToTrigger;
 
+  ID idAirConditioningPack_1;
+  ID idAirConditioningPack_2;
+
   ID idAutothrustN1_TLA_1;
   ID idAutothrustN1_TLA_2;
   ID idAutothrustReverse_1;

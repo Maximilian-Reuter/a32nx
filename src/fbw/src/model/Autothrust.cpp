@@ -307,6 +307,11 @@ void AutothrustModelClass::step()
   rtb_BusAssignment_n.input.thrust_reduction_altitude = Autothrust_U.in.input.thrust_reduction_altitude;
   rtb_BusAssignment_n.input.thrust_reduction_altitude_go_around =
     Autothrust_U.in.input.thrust_reduction_altitude_go_around;
+  rtb_BusAssignment_n.input.is_anti_ice_wing_active = Autothrust_U.in.input.is_anti_ice_wing_active;
+  rtb_BusAssignment_n.input.is_anti_ice_engine_1_active = Autothrust_U.in.input.is_anti_ice_engine_1_active;
+  rtb_BusAssignment_n.input.is_anti_ice_engine_2_active = Autothrust_U.in.input.is_anti_ice_engine_2_active;
+  rtb_BusAssignment_n.input.is_air_conditioning_1_active = Autothrust_U.in.input.is_air_conditioning_1_active;
+  rtb_BusAssignment_n.input.is_air_conditioning_2_active = Autothrust_U.in.input.is_air_conditioning_2_active;
   rtb_BusAssignment_n.output = Autothrust_P.athr_out_MATLABStruct.output;
   if (Autothrust_U.in.data.is_engine_operative_1 && Autothrust_U.in.data.is_engine_operative_2) {
     rtb_BusAssignment_n.data_computed.TLA_in_active_range = ((Autothrust_U.in.input.TLA_1_deg >= 0.0) &&
@@ -757,6 +762,11 @@ void AutothrustModelClass::step()
   Autothrust_Y.out.input.is_SRS_GA_mode_active = Autothrust_U.in.input.is_SRS_GA_mode_active;
   Autothrust_Y.out.input.thrust_reduction_altitude = Autothrust_U.in.input.thrust_reduction_altitude;
   Autothrust_Y.out.input.thrust_reduction_altitude_go_around = Autothrust_U.in.input.thrust_reduction_altitude_go_around;
+  Autothrust_Y.out.input.is_anti_ice_wing_active = Autothrust_U.in.input.is_anti_ice_wing_active;
+  Autothrust_Y.out.input.is_anti_ice_engine_1_active = Autothrust_U.in.input.is_anti_ice_engine_1_active;
+  Autothrust_Y.out.input.is_anti_ice_engine_2_active = Autothrust_U.in.input.is_anti_ice_engine_2_active;
+  Autothrust_Y.out.input.is_air_conditioning_1_active = Autothrust_U.in.input.is_air_conditioning_1_active;
+  Autothrust_Y.out.input.is_air_conditioning_2_active = Autothrust_U.in.input.is_air_conditioning_2_active;
   if (!rtb_inReverse) {
     Autothrust_Y.out.output.sim_throttle_lever_1_pos = Autothrust_DWork.Delay_DSTATE_n;
   } else {

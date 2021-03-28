@@ -230,6 +230,9 @@ void FlyByWireInterface::setupLocalVariables() {
   idAutothrustMode = register_named_variable("A32NX_AUTOTHRUST_MODE");
   idAutothrustModeMessage = register_named_variable("A32NX_AUTOTHRUST_MODE_MESSAGE");
 
+  idAirConditioningPack_1 = register_named_variable("A32NX_AIRCOND_PACK1_TOGGLE");
+  idAirConditioningPack_2 = register_named_variable("A32NX_AIRCOND_PACK2_TOGGLE");
+
   idAutothrustThrustLimitType = register_named_variable("A32NX_AUTOTHRUST_THRUST_LIMIT_TYPE");
   idAutothrustThrustLimit = register_named_variable("A32NX_AUTOTHRUST_THRUST_LIMIT");
   idAutothrustN1_TLA_1 = register_named_variable("A32NX_AUTOTHRUST_TLA_N1:1");
@@ -957,6 +960,11 @@ bool FlyByWireInterface::updateAutothrust(double sampleTime) {
     autoThrustInput.in.input.is_SRS_GA_mode_active = autopilotStateMachineOutput.vertical_mode == 41;
     autoThrustInput.in.input.thrust_reduction_altitude = get_named_variable_value(idFmgcThrustReductionAltitude);
     autoThrustInput.in.input.thrust_reduction_altitude_go_around = get_named_variable_value(idFmgcThrustReductionAltitudeGoAround);
+    autoThrustInput.in.input.is_anti_ice_wing_active = simData.wingAntiIce == 1;
+    autoThrustInput.in.input.is_anti_ice_engine_1_active = simData.engineAntiIce_1 == 1;
+    autoThrustInput.in.input.is_anti_ice_engine_2_active = simData.engineAntiIce_2 == 1;
+    autoThrustInput.in.input.is_air_conditioning_1_active = get_named_variable_value(idAirConditioningPack_1);
+    autoThrustInput.in.input.is_air_conditioning_2_active = get_named_variable_value(idAirConditioningPack_2);
 
     // step the model -------------------------------------------------------------------------------------------------
     autoThrust.setExternalInputs(&autoThrustInput);

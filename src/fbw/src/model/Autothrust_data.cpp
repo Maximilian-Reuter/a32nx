@@ -68,7 +68,12 @@ AutothrustModelClass::Parameters_Autothrust_T AutothrustModelClass::Autothrust_P
       false,
       false,
       0.0,
-      0.0
+      0.0,
+      false,
+      false,
+      false,
+      false,
+      false
     },
 
     {
