@@ -148,10 +148,7 @@ class A32NX_FlightPhase_PreFlight {
             // we try to detect a false lift off (during terrain loading) from a true liftoff e.g. during takeoff. (temporary solution only)
             Math.round(ra / 100) !== Math.round(Simplane.getAltitude() / 100) && ra > 1.5 ||
             (
-                (
-                    Simplane.getEngineThrottleMode(0) >= ThrottleMode.FLEX_MCT ||
-                    Simplane.getEngineThrottleMode(1) >= ThrottleMode.FLEX_MCT
-                ) &&
+                Math.max(SimVar.GetSimVarValue("L:A32NX_AUTOTHRUST_TLA:1", "number"), SimVar.GetSimVarValue("L:A32NX_AUTOTHRUST_TLA:2", "number")) >= 35 &&
                 !isNaN(_fmc.v2Speed) &&
                 (
                     (
@@ -200,7 +197,7 @@ class A32NX_FlightPhase_TakeOff {
     check(_deltaTime, _fmc) {
         const isAcOnGround = Simplane.getAltitudeAboveGround() <= 1.5;
 
-        if (isAcOnGround && Simplane.getEngineThrottleMode(0) < ThrottleMode.FLEX_MCT && Simplane.getEngineThrottleMode(1) < ThrottleMode.FLEX_MCT) {
+        if (isAcOnGround && Math.max(SimVar.GetSimVarValue("L:A32NX_AUTOTHRUST_TLA:1", "number"), SimVar.GetSimVarValue("L:A32NX_AUTOTHRUST_TLA:2", "number")) < 35) {
             this.nextFmgcFlightPhase = FmgcFlightPhases.PREFLIGHT;
             return true;
         }
@@ -315,7 +312,7 @@ class A32NX_FlightPhase_Approach {
     }
 
     check(_deltaTime, _fmc) {
-        if (Simplane.getEngineThrottleMode(0) === ThrottleMode.TOGA || Simplane.getEngineThrottleMode(1) === ThrottleMode.TOGA) {
+        if (Math.max(SimVar.GetSimVarValue("L:A32NX_AUTOTHRUST_TLA:1", "number"), SimVar.GetSimVarValue("L:A32NX_AUTOTHRUST_TLA:2", "number")) === 45) {
             this.nextFmgcFlightPhase = FmgcFlightPhases.GOAROUND;
             return true;
         }
@@ -355,10 +352,7 @@ class A32NX_FlightPhase_Done {
         return this.takeoffConfirmation.write(
             Math.round(ra / 100) !== Math.round(Simplane.getAltitude() / 100) && ra > 1.5 ||
             (
-                (
-                    Simplane.getEngineThrottleMode(0) >= ThrottleMode.FLEX_MCT ||
-                    Simplane.getEngineThrottleMode(1) >= ThrottleMode.FLEX_MCT
-                ) &&
+                Math.max(SimVar.GetSimVarValue("L:A32NX_AUTOTHRUST_TLA:1", "number"), SimVar.GetSimVarValue("L:A32NX_AUTOTHRUST_TLA:2", "number")) >= 35 &&
                 !isNaN(_fmc.v2Speed) &&
                 (
                     (

@@ -19,7 +19,7 @@ class A32NX_FWC {
         this.speedAbove80KtsMemo = new NXLogic_MemoryNode(true);
 
         // ESDL 1. 0. 79 / ESDL 1. 0. 80
-        this.mctMemo = new NXLogic_TriggeredMonostableNode(60, false);
+        this.mctMemo = new NXLogic_ConfirmNode(60, false);
 
         // ESDL 1. 0.100
         this.firePBOutConf = new NXLogic_ConfirmNode(0.2); // CONF01
@@ -141,10 +141,10 @@ class A32NX_FWC {
         const hAbv800 = radioHeight > 800;
 
         // ESLD 1.0.79 + 1.0.80
-        const eng1TLA = Simplane.getEngineThrottleMode(0);
-        const eng2TLA = Simplane.getEngineThrottleMode(1);
-        const eng1OrEng2MCT = eng1TLA >= ThrottleMode.FLEX_MCT || eng2TLA >= ThrottleMode.FLEX_MCT;
-        const eng1AndEng2MCL = eng1TLA >= ThrottleMode.CLIMB && eng2TLA >= ThrottleMode.CLIMB;
+        const eng1TLA = SimVar.GetSimVarValue("L:A32NX_AUTOTHRUST_TLA:1", "number");
+        const eng2TLA = SimVar.GetSimVarValue("L:A32NX_AUTOTHRUST_TLA:2", "number");
+        const eng1OrEng2MCT = eng1TLA >= 36.7 || eng2TLA >= 36.7;
+        const eng1AndEng2MCL = eng1TLA >= 22.9 && eng2TLA >= 22.9;
         const eng1Or2TOPower = (
             eng1OrEng2MCT ||
             (this.mctMemo.write(eng1OrEng2MCT, _deltaTime) && !hAbv1500 && eng1AndEng2MCL)

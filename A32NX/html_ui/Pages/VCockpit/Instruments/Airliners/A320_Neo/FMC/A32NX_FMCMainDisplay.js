@@ -717,7 +717,8 @@ class FMCMainDisplay extends BaseAirliners {
                     }
                 }
             }
-            const currentHasReachedFlex = Simplane.getEngineThrottleMode(0) >= ThrottleMode.FLEX_MCT && Simplane.getEngineThrottleMode(1) >= ThrottleMode.FLEX_MCT;
+
+            const currentHasReachedFlex = Math.max(SimVar.GetSimVarValue("L:A32NX_AUTOTHRUST_TLA:1", "number"), SimVar.GetSimVarValue("L:A32NX_AUTOTHRUST_TLA:2", "number")) >= 35;
             if (currentHasReachedFlex !== this._lastHasReachFlex) {
                 this._lastHasReachFlex = currentHasReachedFlex;
                 console.log("Current Has Reached Flex = " + currentHasReachedFlex);
