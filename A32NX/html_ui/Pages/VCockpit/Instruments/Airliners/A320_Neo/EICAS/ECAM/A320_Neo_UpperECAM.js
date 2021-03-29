@@ -1980,19 +1980,19 @@ var A320_Neo_UpperECAM;
             this.allGauges.push(this.gaugeN1);
         }
         getModeEGTMax() {
-            if (this.throttleMode === 4) {
-                return this.timerTOGA > 0 ? 1060 : 1025;
+            switch (this.throttleMode) {
+                case 4:
+                    return this.timerTOGA > 0 ? 1060 : 1025;
+
+                case 1:
+                case 2:
+                case 3:
+                case 5:
+                    return 1025;
+
+                default:
+                    return 750;
             }
-            if (this.throttleMode === 2 || this.throttleMode === 3) {
-                return 1025;
-            }
-            if (this.throttleMode === 1) {
-                return 875;
-            }
-            if (this.throttleMode === 5) {
-                return 750;
-            }
-            return 850;
         }
         getModeN1Max() {
             switch (this.throttleMode) {
