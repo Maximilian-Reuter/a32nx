@@ -24,6 +24,7 @@
 #include "AutopilotLaws.h"
 #include "AutopilotStateMachine.h"
 #include "Autothrust.h"
+#include "EngineData.h"
 #include "FlightDataRecorder.h"
 #include "FlyByWire.h"
 #include "InterpolatingLookupTable.h"
@@ -170,10 +171,30 @@ class FlyByWireInterface {
 
   std::vector<std::shared_ptr<ThrottleAxisMapping>> throttleAxis;
 
+  EngineData engineData = {};
+  ID engineEngine1EGT;
+  ID engineEngine2EGT;
+  ID engineEngine1FF;
+  ID engineEngine2FF;
+  ID engineEngine1PreFF;
+  ID engineEngine2PreFF;
+  ID engineEngineImbalance;
+  ID engineFuelUsedLeft;
+  ID engineFuelUsedRight;
+  ID engineFuelQuantityPre;
+  ID engineFuelLeftPre;
+  ID engineFuelRightPre;
+  ID engineEngineCrank;
+  ID engineEngineCycleTime;
+  ID enginePreFlightPhase;
+  ID engineActualFlightPhase;
+
   void loadConfiguration();
   void setupLocalVariables();
 
   bool readDataAndLocalVariables(double sampleTime);
+
+  bool updateEngineData(double sampleTime);
 
   bool updateAutopilotStateMachine(double sampleTime);
   bool updateAutopilotLaws(double sampleTime);

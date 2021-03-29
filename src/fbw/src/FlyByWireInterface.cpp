@@ -92,8 +92,11 @@ bool FlyByWireInterface::update(double sampleTime) {
   // get throttle data and process it
   result &= updateAutothrust(sampleTime);
 
+  // update engine data
+  result &= updateEngineData(sampleTime);
+
   // update flight data recorder
-  flightDataRecorder.update(&autopilotStateMachine, &autopilotLaws, &autoThrust, &flyByWire);
+  flightDataRecorder.update(&autopilotStateMachine, &autopilotLaws, &autoThrust, &flyByWire, engineData);
 
   // if default AP is on -> disconnect it
   if (simConnectInterface.getSimData().autopilot_master_on) {
@@ -241,6 +244,23 @@ void FlyByWireInterface::setupLocalVariables() {
   idAutothrustReverse_2 = register_named_variable("A32NX_AUTOTHRUST_REVERSE:2");
   idAutothrustN1_c_1 = register_named_variable("A32NX_AUTOTHRUST_N1_COMMANDED:1");
   idAutothrustN1_c_2 = register_named_variable("A32NX_AUTOTHRUST_N1_COMMANDED:2");
+
+  engineEngine1EGT = register_named_variable("A32NX_ENGINE_EGT:1");
+  engineEngine2EGT = register_named_variable("A32NX_ENGINE_EGT:2");
+  engineEngine1FF = register_named_variable("A32NX_ENGINE_FF:1");
+  engineEngine2FF = register_named_variable("A32NX_ENGINE_FF:2");
+  engineEngine1PreFF = register_named_variable("A32NX_ENGINE_PRE_FF:1");
+  engineEngine2PreFF = register_named_variable("A32NX_ENGINE_PRE_FF:2");
+  engineEngineImbalance = register_named_variable("A32NX_ENGINE_IMBALANCE");
+  engineFuelUsedLeft = register_named_variable("A32NX_FUEL_USED:1");
+  engineFuelUsedRight = register_named_variable("A32NX_FUEL_USED:2");
+  engineFuelQuantityPre = register_named_variable("A32NX_FUEL_QUANTITY_PRE");
+  engineFuelLeftPre = register_named_variable("A32NX_FUEL_LEFT_PRE");
+  engineFuelRightPre = register_named_variable("A32NX_FUEL_RIGHT_PRE");
+  engineEngineCrank = register_named_variable("A32NX_ENGINE_CRACK");
+  engineEngineCycleTime = register_named_variable("A32NX_ENGINE_CYCLE_TIME");
+  enginePreFlightPhase = register_named_variable("A32NX_FLIGHT_STATE_PREVIOUS");
+  engineActualFlightPhase = register_named_variable("A32NX_FLIGHT_STATE_ACTUAL");
 }
 
 bool FlyByWireInterface::readDataAndLocalVariables(double sampleTime) {
@@ -318,6 +338,45 @@ bool FlyByWireInterface::readDataAndLocalVariables(double sampleTime) {
   previousSimulationTime = simData.simulationTime;
 
   // success
+  return true;
+}
+
+bool FlyByWireInterface::updateEngineData(double sampleTime) {
+  auto simData = simConnectInterface.getSimData();
+  engineData.generalEngineElapsedTime_1 = simData.generalEngineElapsedTime_1;
+  engineData.generalEngineElapsedTime_2 = simData.generalEngineElapsedTime_2;
+  engineData.standardAtmTemperature = simData.standardAtmTemperature;
+  engineData.turbineEngineCorrectedFuelFlow_1 = simData.turbineEngineCorrectedFuelFlow_1;
+  engineData.turbineEngineCorrectedFuelFlow_2 = simData.turbineEngineCorrectedFuelFlow_2;
+  engineData.fuelTankCapacityAuxLeft = simData.fuelTankCapacityAuxLeft;
+  engineData.fuelTankCapacityAuxRight = simData.fuelTankCapacityAuxRight;
+  engineData.fuelTankCapacityMainLeft = simData.fuelTankCapacityMainLeft;
+  engineData.fuelTankCapacityMainRight = simData.fuelTankCapacityMainRight;
+  engineData.fuelTankCapacityCenter = simData.fuelTankCapacityCenter;
+  engineData.fuelTankQuantityAuxLeft = simData.fuelTankQuantityAuxLeft;
+  engineData.fuelTankQuantityAuxRight = simData.fuelTankQuantityAuxRight;
+  engineData.fuelTankQuantityMainLeft = simData.fuelTankQuantityMainLeft;
+  engineData.fuelTankQuantityMainRight = simData.fuelTankQuantityMainRight;
+  engineData.fuelTankQuantityCenter = simData.fuelTankQuantityCenter;
+  engineData.fuelTankQuantityTotal = simData.fuelTankQuantityTotal;
+  engineData.fuelWeightPerGallon = simData.fuelWeightPerGallon;
+  engineData.engineEngine1EGT = get_named_variable_value(engineEngine1EGT);
+  engineData.engineEngine2EGT = get_named_variable_value(engineEngine2EGT);
+  engineData.engineEngine1FF = get_named_variable_value(engineEngine1FF);
+  engineData.engineEngine2FF = get_named_variable_value(engineEngine2FF);
+  engineData.engineEngine1PreFF = get_named_variable_value(engineEngine1PreFF);
+  engineData.engineEngine2PreFF = get_named_variable_value(engineEngine2PreFF);
+  engineData.engineEngineImbalance = get_named_variable_value(engineEngineImbalance);
+  engineData.engineFuelUsedLeft = get_named_variable_value(engineFuelUsedLeft);
+  engineData.engineFuelUsedRight = get_named_variable_value(engineFuelUsedRight);
+  engineData.engineFuelQuantityPre = get_named_variable_value(engineFuelQuantityPre);
+  engineData.engineFuelLeftPre = get_named_variable_value(engineFuelLeftPre);
+  engineData.engineFuelRightPre = get_named_variable_value(engineFuelRightPre);
+  engineData.engineEngineCrank = get_named_variable_value(engineEngineCrank);
+  engineData.engineEngineCycleTime = get_named_variable_value(engineEngineCycleTime);
+  engineData.enginePreFlightPhase = get_named_variable_value(enginePreFlightPhase);
+  engineData.engineActualFlightPhase = get_named_variable_value(engineActualFlightPhase);
+
   return true;
 }
 

@@ -47,8 +47,7 @@ void FlightDataRecorder::initialize() {
   // read basic configuration
   isEnabled = INITypeConversion::getBoolean(iniStructure, "FLIGHT_DATA_RECORDER", "ENABLED", true);
   maximumFileCount = INITypeConversion::getInteger(iniStructure, "FLIGHT_DATA_RECORDER", "MAXIMUM_NUMBER_OF_FILES", 15);
-  maximumSampleCounter =
-      INITypeConversion::getInteger(iniStructure, "FLIGHT_DATA_RECORDER", "MAXIMUM_NUMBER_OF_ENTRIES_PER_FILE", 864000);
+  maximumSampleCounter = INITypeConversion::getInteger(iniStructure, "FLIGHT_DATA_RECORDER", "MAXIMUM_NUMBER_OF_ENTRIES_PER_FILE", 864000);
 
   // print configuration
   cout << "WASM: Flight Data Recorder Configuration : Enabled                  "
@@ -65,7 +64,8 @@ void FlightDataRecorder::initialize() {
 void FlightDataRecorder::update(AutopilotStateMachineModelClass* autopilotStateMachine,
                                 AutopilotLawsModelClass* autopilotLaws,
                                 AutothrustModelClass* autoThrust,
-                                FlyByWireModelClass* flyByWire) {
+                                FlyByWireModelClass* flyByWire,
+                                const EngineData& engineData) {
   // check if enabled
   if (!isEnabled) {
     return;
@@ -75,13 +75,11 @@ void FlightDataRecorder::update(AutopilotStateMachineModelClass* autopilotStateM
   manageFlightDataRecorderFiles();
 
   // write data to file
-  fileStream->write((char*)(&autopilotStateMachine->getExternalOutputs().out),
-                    sizeof(autopilotStateMachine->getExternalOutputs().out));
-  fileStream->write((char*)(&autopilotLaws->getExternalOutputs().out.output),
-                    sizeof(autopilotLaws->getExternalOutputs().out.output));
-  fileStream->write((char*)(&autoThrust->getExternalOutputs().out.output),
-                    sizeof(autoThrust->getExternalOutputs().out.output));
+  fileStream->write((char*)(&autopilotStateMachine->getExternalOutputs().out), sizeof(autopilotStateMachine->getExternalOutputs().out));
+  fileStream->write((char*)(&autopilotLaws->getExternalOutputs().out.output), sizeof(autopilotLaws->getExternalOutputs().out.output));
+  fileStream->write((char*)(&autoThrust->getExternalOutputs().out), sizeof(autoThrust->getExternalOutputs().out));
   fileStream->write((char*)(&flyByWire->getExternalOutputs().out), sizeof(flyByWire->getExternalOutputs().out));
+  fileStream->write((char*)(&engineData), sizeof(engineData));
 }
 
 void FlightDataRecorder::terminate() {

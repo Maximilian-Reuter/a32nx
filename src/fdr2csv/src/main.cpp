@@ -5,6 +5,7 @@
 #include "AutopilotStateMachine_types.h"
 #include "Autothrust_types.h"
 #include "CommandLine.hpp"
+#include "EngineData.h"
 #include "FlightDataRecorderConverter.h"
 #include "FlyByWire_types.h"
 #include "zfstream.h"
@@ -102,18 +103,20 @@ int main(int argc, char* argv[]) {
   // struct for reading
   ap_sm_output data_ap_sm = {};
   ap_raw_output data_ap_laws = {};
-  athr_output data_athr = {};
+  athr_out data_athr = {};
   fbw_output data_fbw = {};
+  EngineData data_engine = {};
 
   // read one struct from the file
   while (!in->eof()) {
     // read data into structs
     in->read(reinterpret_cast<char*>(&data_ap_sm), sizeof(ap_sm_output));
     in->read(reinterpret_cast<char*>(&data_ap_laws), sizeof(ap_raw_output));
-    in->read(reinterpret_cast<char*>(&data_athr), sizeof(athr_output));
+    in->read(reinterpret_cast<char*>(&data_athr), sizeof(athr_out));
     in->read(reinterpret_cast<char*>(&data_fbw), sizeof(fbw_output));
+    in->read(reinterpret_cast<char*>(&data_engine), sizeof(EngineData));
     // write struct to csv file
-    FlightDataRecorderConverter::writeStruct(out, delimiter, data_ap_sm, data_ap_laws, data_athr, data_fbw);
+    FlightDataRecorderConverter::writeStruct(out, delimiter, data_ap_sm, data_ap_laws, data_athr, data_fbw, data_engine);
     // print progress
     if (++counter % 500 == 0) {
       cout << "Processed " << counter << " entries...";

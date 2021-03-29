@@ -23,6 +23,7 @@
 #include "AutopilotLaws.h"
 #include "AutopilotStateMachine.h"
 #include "Autothrust.h"
+#include "EngineData.h"
 #include "FlyByWire.h"
 #include "zfstream.h"
 
@@ -33,7 +34,8 @@ class FlightDataRecorder {
   void update(AutopilotStateMachineModelClass* autopilotStateMachine,
               AutopilotLawsModelClass* autopilotLaws,
               AutothrustModelClass* autoThrust,
-              FlyByWireModelClass* flyByWire);
+              FlyByWireModelClass* flyByWire,
+              const EngineData& engineData);
 
   void terminate();
 

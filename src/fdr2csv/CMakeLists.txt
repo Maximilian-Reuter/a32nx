@@ -9,6 +9,7 @@ include_directories(
         AFTER
         "${CMAKE_SOURCE_DIR}/src"
         "${CMAKE_SOURCE_DIR}/src/commandline"
+        "${CMAKE_SOURCE_DIR}/../fbw/src"
         "${CMAKE_SOURCE_DIR}/../fbw/src/model"
         "${CMAKE_SOURCE_DIR}/../fbw/src/zlib"
 )
