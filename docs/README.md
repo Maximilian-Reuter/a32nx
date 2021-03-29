@@ -18,7 +18,7 @@
 
 ##### Flight Management
 
-- ❌ Due to lack of new LNAV, sometimes the plane banks to the opposite direction before a transition
+- ❌ Due to lack of LNAV, the flaws of the default flight plan manager still apply (bank to left or right shortly after TO etc)
 - ❌ Due to lack of VNAV, DES mode is currently only using SPD/MACH
 - ❌ Due to lack of VNAV, RNAV approaches are not supported yet
 
@@ -30,13 +30,13 @@
 - ❌ Engine out operations are not yet considered
 - ❌ AP performance when flying turbulence might not be satisfying in all cases
 - ❌ AP is not disconnected due to pilot input (sidestick, rudder) or turbulence
+- ❌ Flare Law has issues with fast raising ground before the runway
+- ❌ LOC* has rare issues capturing the LOC
 
 ##### Engines
 
-- ❌ Fuel used since start is not shown correctly on ECAM fuel page, it's basically 0
 - ❌ Realistic start-up procedure is missing
 - ❌ During start, no fuel flow is shown
-- ❌ Fuel flow is currently always in KG
 - ❌ EWD has issues in correctly displaying N2 > 100
 - ❌ Realistic Descent/ Approach Idle Parameters.
 
@@ -44,10 +44,10 @@
 
 - ❌ N1 thrust limit displayed and achieved may differ
 - ❌ Thrust limits are preliminary and not finished (they are currently lacking adaptation for Mach)
-- ❌ Thrust limits are not corrected for air-conditioning or anti-ice yet
 
 #### First implementation available
 
+- 🔸 Switched to different default input source for LNAV, transitions are now better
 - 🔸 Engines can now be started, realistic start-up procedure is in work
 - 🔸 first implementation of custom ATHR system is now available
 - 🔸 principle go-around mode has been added but not all conditions are respected yet
@@ -57,6 +57,8 @@
 - 🔸 SPD/MACH hold might when flying in curves has been improved
 - 🔸 FLEX thrust limit is still rough and is also not adapted for Mach yet
 - 🔸 Pause and slew detection should be ok now
+- 🔸 Fuel flow is currently always in KG
+- 🔸 Thrust limits are now corrected for air-conditioning and anti-ice yet
 
 #### Considered solved
 
@@ -69,6 +71,8 @@
 - ✔️ FD off/on does not deactivate all FMA items
 - ✔️ Engagement of AP with FD off is incorrect
 - ✔️ Flight Director (FD) guidance in pitch is not fully satisfying yet
+- ✔️ Fuel used since start is not shown correctly on ECAM fuel page, it's basically 0
+
 
 ### Sensitivity, dead zones and throttle mapping
 
