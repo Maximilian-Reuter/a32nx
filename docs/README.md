@@ -1,6 +1,9 @@
 # Documentation
 
-❗❗❗ It's crucial for the Autothrust system to have properly setup detents. Ensure that you have enough dead zone around the detents ❗❗❗
+## ❗❗❗ IMPORTANT ❗❗❗
+
+* Use modern flight model (legacy flight model is not supported)
+* It's crucial for the Autothrust system to have properly setup detents. Ensure that you have enough dead zone around the detents
 
 ## Custom Autopilot and Autothrust System incl. new Engine model
 
