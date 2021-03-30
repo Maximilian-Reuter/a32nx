@@ -158,7 +158,7 @@ var A320_Neo_UpperECAM;
                     message: "THR LVR " + _engine,
                     action: "IDLE",
                     isCompleted: () => {
-                        return this.getCachedSimVar("GENERAL ENG THROTTLE LEVER POSITION:" + _engine, "Enum") == 0;
+                        return this.getCachedSimVar("L:A32NX_AUTOTHRUST_TLA:" + _engine, "number") < 2.6;
                     }
                 },
                 {
@@ -237,7 +237,7 @@ var A320_Neo_UpperECAM;
                     message: "THR LEVER " + _engine,
                     action: "IDLE",
                     isCompleted: () => {
-                        return this.getCachedSimVar("GENERAL ENG THROTTLE LEVER POSITION:" + _engine, "Enum") == 0;
+                        return this.getCachedSimVar("L:A32NX_AUTOTHRUST_TLA:" + _engine, "number") < 2.6;
                     }
                 },
                 {
@@ -431,7 +431,7 @@ var A320_Neo_UpperECAM;
                                         message: "THR LEVERS",
                                         action: "IDLE",
                                         isCompleted: () => {
-                                            return this.getCachedSimVar("GENERAL ENG THROTTLE LEVER POSITION:1", "Enum") == 0 && this.getCachedSimVar("GENERAL ENG THROTTLE LEVER POSITION:2", "Enum") == 0;
+                                            return this.getCachedSimVar("L:A32NX_AUTOTHRUST_TLA:1", "number") < 2.6 && this.getCachedSimVar("L:A32NX_AUTOTHRUST_TLA:2", "number") < 2.6;
                                         }
                                     },
                                     {

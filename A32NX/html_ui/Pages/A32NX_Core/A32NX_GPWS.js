@@ -581,7 +581,7 @@ class A32NX_GPWS {
                 }
                 break;
             case "retardPlaying":
-                if (SimVar.GetSimVarValue("GENERAL ENG THROTTLE LEVER POSITION:1", "Percent over 100") <= 0.05 || SimVar.GetSimVarValue("GENERAL ENG THROTTLE LEVER POSITION:2", "Percent over 100") <= 0.05) {
+                if (SimVar.GetSimVarValue("L:A32NX_AUTOTHRUST_TLA:1", "number") < 2.6 || SimVar.GetSimVarValue("L:A32NX_AUTOTHRUST_TLA:2", "number") < 2.6) {
                     this.RetardState.action("land");
                     this.core.soundManager.removePeriodicSound(soundList.retard);
                 } else if (SimVar.GetSimVarValue("L:A32NX_FMGC_FLIGHT_PHASE", "Enum") === FmgcFlightPhases.GOAROUND || radioAlt > 20) {
