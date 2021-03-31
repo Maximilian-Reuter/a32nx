@@ -577,17 +577,17 @@ const D3Cell = () => {
         const MDAText = Math.round(MDA).toString().padStart(6, ' ');
         text = (
             <>
-                <tspan>MDA</tspan>
+                <tspan>BARO</tspan>
                 <tspan className="Cyan" xmlSpace="preserve">{MDAText}</tspan>
             </>
         );
     } else {
         const DH = getSimVar('L:AIRLINER_DECISION_HEIGHT', 'feet');
         if (DH !== -1 && DH !== -2) {
-            const DHText = Math.round(DH).toString().padStart(7, ' ');
+            const DHText = Math.round(DH).toString().padStart(4, ' ');
             text = (
                 <>
-                    <tspan>DH</tspan>
+                    <tspan>RADIO</tspan>
                     <tspan className="Cyan" xmlSpace="preserve">{DHText}</tspan>
                 </>
             );
