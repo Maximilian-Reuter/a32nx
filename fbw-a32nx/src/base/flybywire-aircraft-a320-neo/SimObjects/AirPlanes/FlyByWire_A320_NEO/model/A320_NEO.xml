@@ -4,7 +4,7 @@
 
 <ModelInfo>
     <LODS>
-        <!-- Highest LOD -->
+        <!-- Highest LO -->
         <!-- minimum display size in % (should be bounding sphere vertical screen size, sphere will often be slightly larger than you expect) -->
         <!-- default minSize is 0 -->
         <LOD minSize="80" ModelFile="A320_NEO_LOD00.gltf"/>
